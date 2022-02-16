@@ -124,3 +124,8 @@ def f_assessOpp(threshold, ath, currentprice):
 def run(myThreshold, theATH, theCurrentPrice):
 
   f_assessOpp(myThreshold, theATH, theCurrentPrice):
+
+    
+ 
+
+run(myThreshold, theATH, theCurrentPrice)
