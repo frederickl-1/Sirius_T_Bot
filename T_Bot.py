@@ -11,7 +11,7 @@ import secrets
 import string
 import matplotlib.pyplot as plt
 from datetime import datetime
-!pip install python-binance
+
 
 
 ######################################### Set up with API detaoils #########################################
