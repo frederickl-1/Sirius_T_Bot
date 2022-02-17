@@ -83,7 +83,7 @@ def f_placeBuyOrder(buyamount, currentprice):
       order = client.order_market_buy(
           symbol='BTCUSDT',
           quantity=round(buyamount/currentprice, 4))
-          print(f'{quantity} BTC purchased for ${buyamount})
+      print(f'{quantity} BTC purchased for ${buyamount})
     except BinanceAPIException as e:
         # error handling goes here
         print(e)
