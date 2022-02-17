@@ -43,7 +43,7 @@ These varriables are the input to the run function
 myCapital = float(client.get_asset_balance(asset='USDT')['free'])
 myHodlings = float(client.get_asset_balance(asset='BTC')['free'])
 theCurrentPrice = float(client.get_symbol_ticker(symbol="BTCUSDT")['price'])
-myThreshold = 0.6
+myThreshold = 0.9
 theATH = 69044.77
 
 
