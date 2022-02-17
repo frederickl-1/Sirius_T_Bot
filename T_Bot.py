@@ -46,6 +46,10 @@ theCurrentPrice = float(client.get_symbol_ticker(symbol="BTCUSDT")['price'])
 myThreshold = 0.9
 theATH = 69044.77
 
+print(f'PiggyBank contains ${myCapital} USDT')
+print(f'PiggyBank contains {myHodlings} BTC')
+print(f'Current price of BTC is ${currentPrice}')
+
 
 ######################################### Function to determine Buy / Sell amount #########################################
 '''
@@ -79,6 +83,7 @@ def f_placeBuyOrder(buyamount, currentprice):
       order = client.order_market_buy(
           symbol='BTCUSDT',
           quantity=round(buyamount/currentprice, 4))
+          print(f'{quantity} BTC purchased for ${buyamount})
     except BinanceAPIException as e:
         # error handling goes here
         print(e)
