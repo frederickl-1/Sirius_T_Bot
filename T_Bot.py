@@ -1,5 +1,6 @@
 
 
+
 import json
 import requests
 import pandas as pd
@@ -48,7 +49,7 @@ theATH = 69044.77
 
 print(f'PiggyBank contains ${myCapital} USDT')
 print(f'PiggyBank contains {myHodlings} BTC')
-print(f'Current price of BTC is ${currentPrice}')
+print(f'Current price of BTC is ${theCurrentPrice}')
 
 
 ######################################### Function to determine Buy / Sell amount #########################################
@@ -83,7 +84,7 @@ def f_placeBuyOrder(buyamount, currentprice):
       order = client.order_market_buy(
           symbol='BTCUSDT',
           quantity=round(buyamount/currentprice, 4))
-      print(f'{quantity} BTC purchased for ${buyamount}')
+      print(f'Buy function executed')
     except BinanceAPIException as e:
         # error handling goes here
         print(e)
@@ -110,13 +111,13 @@ def f_placeSellOrder(buyamount, currentprice):
 
 def f_assessOpp(threshold, ath, currentprice):
   
-  if currentPrice < ath*threshold: #Buy condition
+  if currentprice < ath*threshold: #Buy condition
 
     buyamount = f_buyAmount()
     f_placeBuyOrder(buyamount, currentprice)
 
 
-  if currentPrice > ath: #Sell condition
+  if currentprice > ath: #Sell condition
 
     sellamount = f_sellAmount()
     f_placeSellOrder(sellamount, currentprice)
@@ -128,9 +129,8 @@ def f_assessOpp(threshold, ath, currentprice):
 
 def run(myThreshold, theATH, theCurrentPrice):
 
-  f_assessOpp(myThreshold, theATH, theCurrentPrice):
+  f_assessOpp(myThreshold, theATH, theCurrentPrice)
 
     
  
-
 run(myThreshold, theATH, theCurrentPrice)
