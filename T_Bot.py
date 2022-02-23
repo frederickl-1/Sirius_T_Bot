@@ -1,47 +1,69 @@
-
-
-
 import json
 import requests
 import string
+import os
+from twilio.rest import Client
 
 
 
 ######################################### Set up with API detaoils #########################################
+
+# Sirius KuCoin Test Net
+api_key = "6215534b29c69200011e0027"
+api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
+api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+
+
+
+######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
 These varriables are the input to the run function
 '''
 
-
-api_key = 'AoQYMcopeJ5g7rv7vUZNcRbdENh0r3rnF4oJNTEu1wCEz82qYVcTfcYOw4XmGQ2Q'
-api_secret = 'JhYc61rBihBAJZldpYQDxwcGZpgp5h3xj5OX1m8uWSjQDMkProgpLg0fd0aRUgkD'
-
-from binance.client import Client
-from binance.enums import *
-from binance.exceptions import BinanceAPIException, BinanceOrderException
-
-client = Client(api_key, api_secret) #Store key and secret
-client.API_URL = 'https://testnet.binance.vision/api' #Manually change url so we can use test environment
-
-#api_key = "fzDbyqd7z1hZyMmFAc9yfjoHIxG5nWUou0h17l22067Wi7CXtStku3CVX5GFkaHS"
-#api_secret = "2uoiC4c2XPygdd1zApuJgTQAHAcVGxva7cMdEvyYJFr4tdnWieKQqLBLcSY94NP3"
+## Current Price
+from kucoin.client import Market
+client = Market()
+theCurrentPrice = float(client.get_ticker(symbol="BTC-USDT")['price'])
 
 
+## My Holdings
+from kucoin.client import User
+client = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+account = client.get_account_list()
+account = pd.DataFrame(account)
+myCapital = float(account[account['currency'] == 'USDT']['balance'].iloc[0])
+myHodlings = float(account[account['currency'] == 'BTC']['balance'].iloc[0])
 
-######################################### Pull current price and available balance #########################################
-'''
-These varriables are the input to the run function
-'''
 
-myCapital = float(client.get_asset_balance(asset='USDT')['free'])
-myHodlings = float(client.get_asset_balance(asset='BTC')['free'])
-theCurrentPrice = float(client.get_symbol_ticker(symbol="BTCUSDT")['price'])
+## Set other required variables
 myThreshold = 0.9
 theATH = 69044.77
+
 
 print(f'PiggyBank contains ${myCapital} USDT')
 print(f'PiggyBank contains {myHodlings} BTC')
 print(f'Current price of BTC is ${theCurrentPrice}')
+
+######################################### Function to send text message #########################################
+
+def sendtext(message):
+
+  import os
+  from twilio.rest import Client
+
+  account_sid = 'ACfa019028d2069cd11fc93988692a8b0d'
+  auth_token = 'b84fb2af62e0167d0af4e39e8a3ff776'
+
+  client = Client(account_sid, auth_token)
+
+  numbers_to_message = ['+447969808650']#, '+447947964223']
+  for number in numbers_to_message:
+      client.messages.create(
+          body = message,
+          from_ = '+19035225966',
+          to = number
+      )
+
 
 
 ######################################### Function to determine Buy / Sell amount #########################################
@@ -50,18 +72,40 @@ These functions are called in f_placeOrder
 '''
 
 # Define functions that determine the buy and sell amount
-def f_buyAmount():
+def f_buyAmount(ath, currentprice):
   '''
   Currently fixed buy amount, independent of other variables
   '''
-  amount = 200
+
+  x1 = 0.7*ath
+  y1 = 100
+  x2 = 0.5*ath
+  y2 = 500
+    
+  a = (y2 - y1)/(x2 - x1)
+  b = y1 - a*x1
+  y = a*currentprice + b
+
+  amount = round(y, 4)
+
   return amount
 
-def f_sellAmount():
+def f_sellAmount(ath, currentprice):
   '''
   Currently fixed sell amount, independent of other variables
   '''
-  amount = 200
+
+  x1 = 1*ath
+  y1 = 100
+  x2 = 1.5*ath
+  y2 = 500
+    
+  a = (y2 - y1)/(x2 - x1)
+  b = y1 - a*x1
+  y = a*currentprice + b
+
+  amount = round(y, 4)
+
   return amount
 
 
@@ -72,30 +116,21 @@ This function is called in the assess conditions function
 
 def f_placeBuyOrder(buyamount, currentprice):
 
-    try:
-      order = client.order_market_buy(
-          symbol='BTCUSDT',
-          quantity=round(buyamount/currentprice, 4))
-      print(f'Buy function executed')
-    except BinanceAPIException as e:
-        # error handling goes here
-        print(e)
-    except BinanceOrderException as e:
-        # error handling goes here
-        print(e)
+    from kucoin.client import Trade
+    client = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
 
-def f_placeSellOrder(buyamount, currentprice):
-      
     try:
-      order = client.order_market_sell(
-          symbol='BTCUSDT',
-          quantity=round(buyamount/currentprice, 4))
-    except BinanceAPIException as e:
-        # error handling goes here
-        print(e)
-    except BinanceOrderException as e:
-        # error handling goes here
-        print(e)
+      print(str(buyamount))
+      order = client.create_market_order('BTC-USDT', 'buy', funds=str(buyamount))
+      message = f'Durka Durka. Buy function successfully executed. {round(buyamount/currentprice,4)} BTC purchased for ${round(buyamount, 2)}. Mert is a baghead'
+      print(order)
+      print(message)
+      sendtext(message)
+    except Exception as e:
+      print(f'Error placing order: {e}')
+
+#def f_placeSellOrder(sellamount, currentprice):
+      
 
 
 
@@ -105,13 +140,13 @@ def f_assessOpp(threshold, ath, currentprice):
   
   if currentprice < ath*threshold: #Buy condition
 
-    buyamount = f_buyAmount()
+    buyamount = f_buyAmount(ath, currentprice)
     f_placeBuyOrder(buyamount, currentprice)
 
 
   if currentprice > ath: #Sell condition
 
-    sellamount = f_sellAmount()
+    sellamount = f_sellAmount(ath, currentprice)
     f_placeSellOrder(sellamount, currentprice)
       
 
