@@ -72,39 +72,21 @@ These functions are called in f_placeOrder
 '''
 
 # Define functions that determine the buy and sell amount
-def f_buyAmount(ath, currentprice):
+def f_buyAmount():
   '''
   Currently fixed buy amount, independent of other variables
   '''
 
-  x1 = 0.7*ath
-  y1 = 100
-  x2 = 0.5*ath
-  y2 = 500
-    
-  a = (y2 - y1)/(x2 - x1)
-  b = y1 - a*x1
-  y = a*currentprice + b
-
-  amount = round(y, 4)
+  amount = 100
 
   return amount
 
-def f_sellAmount(ath, currentprice):
+def f_sellAmount():
   '''
   Currently fixed sell amount, independent of other variables
   '''
 
-  x1 = 1*ath
-  y1 = 100
-  x2 = 1.5*ath
-  y2 = 500
-    
-  a = (y2 - y1)/(x2 - x1)
-  b = y1 - a*x1
-  y = a*currentprice + b
-
-  amount = round(y, 4)
+  amount = 100
 
   return amount
 
@@ -114,15 +96,31 @@ def f_sellAmount(ath, currentprice):
 This function is called in the assess conditions function
 '''
 
-def f_placeBuyOrder(buyamount, currentprice):
+def f_placeBuyOrder(buyamount):
 
-    from kucoin.client import Trade
-    client = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+    
 
     try:
-      print(str(buyamount))
-      order = client.create_market_order('BTC-USDT', 'buy', funds=str(buyamount))
-      message = f'Durka Durka. Buy function successfully executed. {round(buyamount/currentprice,4)} BTC purchased for ${round(buyamount, 2)}. Mert is a baghead'
+      from kucoin.client import Trade
+      client = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+      print(str(round(buyamount/3, 3)))
+      order = client.create_market_order('ETH-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      order = client.create_market_order('ADA-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      #order = client.create_market_order('MATIC-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+
+      from kucoin.client import Market
+      client = Market()
+      ETHCurrentPrice = float(client.get_ticker(symbol="ETH-USDT")['price'])
+      ADACurrentPrice = float(client.get_ticker(symbol="ADA-USDT")['price'])
+      MATICCurrentPrice = float(client.get_ticker(symbol="MATIC-USDT")['price'])
+
+
+      message = (
+          f'Buy function successfully executed.'\
+          f' ${round(buyamount/3, 2)} of ETH purchased'\
+          f' ${round(buyamount/3, 2)} of ADA purchased'\
+          f' ${round(buyamount/3, 2)} of MATIC purchased'
+      )
       print(order)
       print(message)
       sendtext(message)
@@ -140,14 +138,14 @@ def f_assessOpp(threshold, ath, currentprice):
   
   if currentprice < ath*threshold: #Buy condition
 
-    buyamount = f_buyAmount(ath, currentprice)
-    f_placeBuyOrder(buyamount, currentprice)
+    buyamount = f_buyAmount()
+    f_placeBuyOrder(buyamount)
 
 
   if currentprice > ath: #Sell condition
 
-    sellamount = f_sellAmount(ath, currentprice)
-    f_placeSellOrder(sellamount, currentprice)
+    sellamount = f_sellAmount()
+    f_placeSellOrder(sellamount)
       
 
 
@@ -158,6 +156,26 @@ def run(myThreshold, theATH, theCurrentPrice):
 
   f_assessOpp(myThreshold, theATH, theCurrentPrice)
 
+
+  from kucoin.client import User
+  client = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+  account = client.get_account_list()
+  account = pd.DataFrame(account)
+
+  a = account[['currency', 'balance']]
+
+  Holdings = a.iloc[:,0].to_list()
+  Balances = a.iloc[:,1].to_list()
+
+  message = (
+      f'Account Balances:'\
+      f' {Balances[0]} {Holdings[0]}.'\
+      f' {Balances[1]} {Holdings[1]}.'\
+      f' {Balances[2]} {Holdings[2]}.'
+  )
+
+  print(message)
+  sendtext(message)
     
  
 run(myThreshold, theATH, theCurrentPrice)
