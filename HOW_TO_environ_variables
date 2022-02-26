@@ -13,3 +13,13 @@ Sirius T_Bot 2
 export KC_API_KEY="621a1b182b968a0001530eac"
 export KC_API_SECRET="1c4aad2c-899c-4be7-b188-48901251b7cd"
 export KC_API_PASS="6215534b29c69200011e0027"
+
+
+# See environment variables
+printenv | grep KC_API_KEY
+
+# Save environment varialbes permanently need to write to bashrc
+nano ~/.bashrc
+
+# Apply in this session using
+source ~/.bashrc
