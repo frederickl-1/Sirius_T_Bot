@@ -17,7 +17,7 @@ api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
 '''
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
-api_passphrase = os.environ.get('KC_API_PASSPHRASE')
+api_passphrase = os.environ.get('KC_API_PASS')
 
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
