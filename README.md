@@ -12,6 +12,7 @@ In this version, the following:
 - **Text message to give account balances (requires further dev)**
 - **Updated the install python libraries script**
 - **Make API details into environment variables**
+- **Threshold set to 0.9**
 
 To Do:
 - Track ATH in real time
