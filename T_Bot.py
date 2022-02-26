@@ -10,7 +10,7 @@ from twilio.rest import Client
 # Sirius KuCoin Test Net
 
 
-api_key = "6215534b29c69200011e0027"
+api_key = os.environ.get('KC_API_KEY') #api_key = "6215534b29c69200011e0027"
 api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
 api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
 
