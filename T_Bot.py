@@ -9,6 +9,7 @@ from twilio.rest import Client
 
 # Sirius KuCoin Test Net
 
+'''
 
 api_key = "6215534b29c69200011e0027"
 api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
@@ -18,7 +19,7 @@ api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
 api_key = os.environ.get(KC_API_KEY)
 api_secret = os.environ.get(KC_API_SECRET)
 api_passphrase = os.environ.get(KC_API_PASSPHRASE)
-'''
+
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
@@ -56,13 +57,14 @@ def sendtext(message):
   import os
   from twilio.rest import Client
 
+  '''
   account_sid = 'ACfa019028d2069cd11fc93988692a8b0d'
   auth_token = '498ee4715983e6cde24cc7ae9baa4a75'
 
   '''
   account_sid = os.environ.get(TWIL_ACCOUNT_SID)
   auth_token = os.environ.get(TWIL_AUTH_TOKEN)
-  '''
+  
 
   client = Client(account_sid, auth_token)
 
@@ -195,3 +197,4 @@ def run(myThreshold, theATH, theCurrentPrice):
     
  
 run(myThreshold, theATH, theCurrentPrice)
+
