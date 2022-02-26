@@ -1,48 +1,100 @@
-
-
-
 import json
 import requests
 import string
+import os
+from twilio.rest import Client
 
 
 
 ######################################### Set up with API detaoils #########################################
+
+# Sirius KuCoin Test Net
+
+'''
+api_key = "6215534b29c69200011e0027"
+api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
+api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+
+'''
+api_key = os.environ.get(kc_api_key)
+api_secret = os.environ.get(kc_api_secret)
+api_passphrase = os.environ.get(kc_api_passphrase)
+
+######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
 These varriables are the input to the run function
 '''
 
-
-api_key = 'AoQYMcopeJ5g7rv7vUZNcRbdENh0r3rnF4oJNTEu1wCEz82qYVcTfcYOw4XmGQ2Q'
-api_secret = 'JhYc61rBihBAJZldpYQDxwcGZpgp5h3xj5OX1m8uWSjQDMkProgpLg0fd0aRUgkD'
-
-from binance.client import Client
-from binance.enums import *
-from binance.exceptions import BinanceAPIException, BinanceOrderException
-
-client = Client(api_key, api_secret) #Store key and secret
-client.API_URL = 'https://testnet.binance.vision/api' #Manually change url so we can use test environment
-
-#api_key = "fzDbyqd7z1hZyMmFAc9yfjoHIxG5nWUou0h17l22067Wi7CXtStku3CVX5GFkaHS"
-#api_secret = "2uoiC4c2XPygdd1zApuJgTQAHAcVGxva7cMdEvyYJFr4tdnWieKQqLBLcSY94NP3"
+## Current Price
+from kucoin.client import Market
+client = Market()
+theCurrentPrice = float(client.get_ticker(symbol="BTC-USDT")['price'])
 
 
+## My Holdings
+from kucoin.client import User
+client = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+account = client.get_account_list()
+account = pd.DataFrame(account)
+myCapital = float(account[account['currency'] == 'USDT']['balance'].iloc[0])
+myHodlings = float(account[account['currency'] == 'BTC']['balance'].iloc[0])
 
-######################################### Pull current price and available balance #########################################
-'''
-These varriables are the input to the run function
-'''
 
-myCapital = float(client.get_asset_balance(asset='USDT')['free'])
-myHodlings = float(client.get_asset_balance(asset='BTC')['free'])
-theCurrentPrice = float(client.get_symbol_ticker(symbol="BTCUSDT")['price'])
+## Set other required variables
 myThreshold = 0.9
 theATH = 69044.77
+
 
 print(f'PiggyBank contains ${myCapital} USDT')
 print(f'PiggyBank contains {myHodlings} BTC')
 print(f'Current price of BTC is ${theCurrentPrice}')
 
+######################################### Function to send text message #########################################
+
+def TextOrders(message):
+
+  import os
+  from twilio.rest import Client
+
+  '''
+  account_sid = 'ACfa019028d2069cd11fc93988692a8b0d'
+  auth_token = '498ee4715983e6cde24cc7ae9baa4a75'
+
+  '''
+  account_sid = os.environ.get(twil_account_sid)
+  auth_token = os.environ.get(twil_auth_token)
+
+  client = Client(account_sid, auth_token)
+
+  numbers_to_message = ['+447969808650']#, '+447947964223']
+  for number in numbers_to_message:
+      client.messages.create(
+          body = message,
+          from_ = '+19035225966',
+          to = number
+      )
+
+def TextBalances():
+
+  from kucoin.client import User
+  client = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+  account = client.get_account_list()
+  account = pd.DataFrame(account)
+
+  a = account[['currency', 'balance']]
+
+  Holdings = a.iloc[:,0].to_list()
+  Balances = a.iloc[:,1].to_list()
+
+  message = (
+      f'Account Balances:'\
+      f' {Balances[0]} {Holdings[0]}.'\
+      f' {Balances[1]} {Holdings[1]}.'\
+      f' {Balances[2]} {Holdings[2]}.'
+  )
+
+  print(message)
+  sendtext(message)
 
 ######################################### Function to determine Buy / Sell amount #########################################
 '''
@@ -54,14 +106,18 @@ def f_buyAmount():
   '''
   Currently fixed buy amount, independent of other variables
   '''
-  amount = 200
+
+  amount = 100
+
   return amount
 
 def f_sellAmount():
   '''
   Currently fixed sell amount, independent of other variables
   '''
-  amount = 200
+
+  amount = 100
+
   return amount
 
 
@@ -70,32 +126,44 @@ def f_sellAmount():
 This function is called in the assess conditions function
 '''
 
-def f_placeBuyOrder(buyamount, currentprice):
+def f_placeBuyOrder(buyamount):
+
+    
 
     try:
-      order = client.order_market_buy(
-          symbol='BTCUSDT',
-          quantity=round(buyamount/currentprice, 4))
-      print(f'Buy function executed')
-    except BinanceAPIException as e:
-        # error handling goes here
-        print(e)
-    except BinanceOrderException as e:
-        # error handling goes here
-        print(e)
 
-def f_placeSellOrder(buyamount, currentprice):
+      from kucoin.client import Trade
+      client = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+      print(str(round(buyamount/3, 3)))
+      order1 = client.create_market_order('ETH-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      print(order1)
+      order2 = client.create_market_order('ADA-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      print(order2)
+      #order3 = client.create_market_order('MATIC-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      #print(order3)
+
+      from kucoin.client import Market
+      client = Market()
+      ETHCurrentPrice = float(client.get_ticker(symbol="ETH-USDT")['price'])
+      ADACurrentPrice = float(client.get_ticker(symbol="ADA-USDT")['price'])
+      MATICCurrentPrice = float(client.get_ticker(symbol="MATIC-USDT")['price'])
+
+
+      message = (
+          f'Buy function successfully executed.'\
+          f' ${round(buyamount/3, 2)} of ETH purchased.'\
+          f' ${round(buyamount/3, 2)} of ADA purchased.'\
+          f' ${round(buyamount/3, 2)} of MATIC purchased.'
+      )
       
-    try:
-      order = client.order_market_sell(
-          symbol='BTCUSDT',
-          quantity=round(buyamount/currentprice, 4))
-    except BinanceAPIException as e:
-        # error handling goes here
-        print(e)
-    except BinanceOrderException as e:
-        # error handling goes here
-        print(e)
+      print(message)
+      TextOrders(message)
+
+    except Exception as e:
+      print(f'Error placing order: {e}')
+
+#def f_placeSellOrder(sellamount, currentprice):
+      
 
 
 
@@ -106,13 +174,13 @@ def f_assessOpp(threshold, ath, currentprice):
   if currentprice < ath*threshold: #Buy condition
 
     buyamount = f_buyAmount()
-    f_placeBuyOrder(buyamount, currentprice)
+    f_placeBuyOrder(buyamount)
 
 
   if currentprice > ath: #Sell condition
 
     sellamount = f_sellAmount()
-    f_placeSellOrder(sellamount, currentprice)
+    f_placeSellOrder(sellamount)
       
 
 
@@ -123,6 +191,9 @@ def run(myThreshold, theATH, theCurrentPrice):
 
   f_assessOpp(myThreshold, theATH, theCurrentPrice)
 
+  TextBalances()
     
  
 run(myThreshold, theATH, theCurrentPrice)
+
+
