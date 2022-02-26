@@ -11,7 +11,7 @@ In this version, the following:
 - Text message sent when purchase is made
 - **Text message to give account balances (requires further dev)**
 - **Updated the install python libraries script**
-- **Make API details into environment variables**
+- **Make API details into environment variables (requires further dev)**
 
 To Do:
 - Track ATH in real time
