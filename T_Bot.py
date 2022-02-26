@@ -3,7 +3,8 @@ import os
 import pandas as pd
 from twilio.rest import Client
 
-
+# Load environment variables
+source ~/.bashrc
 
 ######################################### Set up with API detaoils #########################################
 
