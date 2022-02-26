@@ -17,3 +17,4 @@ To Do:
 - Track ATH in real time
 
 - Improve error handling
+- Limit IP address access of API
