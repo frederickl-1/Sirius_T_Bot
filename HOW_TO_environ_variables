@@ -1,7 +1,7 @@
 #bash
 
-export kc_api_key = "6215534b29c69200011e0027"
-export kc_api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
-export kc_api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
-export twil_account_sid = 'ACfa019028d2069cd11fc93988692a8b0d'
-export twil_auth_token = '498ee4715983e6cde24cc7ae9baa4a75'
+export kc_api_key="6215534b29c69200011e0027"
+export kc_api_secret="8b25ab7f-2a50-44de-8ffc-f0a430040aca"
+export kc_api_passphrase="6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+export twil_account_sid='ACfa019028d2069cd11fc93988692a8b0d'
+export twil_auth_token='498ee4715983e6cde24cc7ae9baa4a75'
