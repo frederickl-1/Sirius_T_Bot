@@ -8,3 +8,8 @@ In this version, the following:
 - **Fixed weekly purchase amount is apportioned amongst currencies if BTC below certain threshold**
 - Text message sent when purchase is made
 - **Text message to give account balances (requires further dev)**
+- **Updated the install python libraries script**
+
+To Do:
+- Track ATH in real time
+
