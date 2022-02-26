@@ -1,7 +1,9 @@
 #!/bin/bash
-echo "installing praw library"
-pip3 install praw
-echo "installing pandas library"
-pip3 install pandas
-echo "installing binance library"
-pip3 install python-binance
+
+echo "Python 3 already installed. Installing additional Libraries"
+echo "Installing pip"
+sudo apt install python3-pip
+echo "Installing KuCoin SDK"
+pip install kucoin-python
+echo "Installing Twillio"
+pip install twillio
