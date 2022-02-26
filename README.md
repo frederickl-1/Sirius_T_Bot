@@ -15,6 +15,7 @@ In this version, the following:
 
 To Do:
 - Track ATH in real time
-
 - Improve error handling
 - Limit IP address access of API
+- Sell function that acts based on the price of currencies held
+- Script to alert when one of the coins we hold are pumping
