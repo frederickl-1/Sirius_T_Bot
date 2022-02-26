@@ -7,3 +7,5 @@ echo "Installing KuCoin SDK"
 pip install kucoin-python
 echo "Installing Twilio"
 pip install twilio
+
+pip install pandas
