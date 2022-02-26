@@ -2,6 +2,14 @@
 
 export KC_API_KEY="6215534b29c69200011e0027"
 export KC_API_SECRET="8b25ab7f-2a50-44de-8ffc-f0a430040aca"
-export KC_API_PASSPHRASE="6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+export KC_API_PASS="6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
 export TWIL_ACCOUNT_SID='ACfa019028d2069cd11fc93988692a8b0d'
 export TWIL_AUTH_TOKEN='498ee4715983e6cde24cc7ae9baa4a75'
+
+
+export KC_API_PASS="6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+
+Sirius T_Bot 2
+export KC_API_KEY="621a1b182b968a0001530eac"
+export KC_API_SECRET="1c4aad2c-899c-4be7-b188-48901251b7cd"
+export KC_API_PASS="6215534b29c69200011e0027"
