@@ -21,5 +21,8 @@ printenv | grep KC_API_KEY
 # Save environment varialbes permanently need to write to bashrc
 nano ~/.bashrc
 
-# Apply in this session using
-source ~/.bashrc
+# Need to adjust the crontab -e file as follows
+SHELL=/bin/bash
+
+*/1 * * * * source $HOME/.profile; /usr/bin/python3 /home/ubuntu/Sirius_T_Bo
+t/T_Bot.py >> ~/cron.log 2>&1
