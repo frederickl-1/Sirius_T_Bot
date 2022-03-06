@@ -11,13 +11,13 @@ In this version, the following:
 - Text message sent when purchase is made
 - **Text message to give account balances (requires further dev)**
 - **Updated the install python libraries script**
-- **Make API details into environment variables**
+
 - **Threshold set to 0.9**
 
 
 Current Bugs:
-- New Twillio account not sending messages
-- Need to update environment variables in profile (have tried bash) for the scrip
+- Need to update API variables in script
+- Code not letting me place multiple orders at the same time
 
 
 To Do
@@ -26,8 +26,11 @@ To Do
 -   Creates text file if none exists
 - Improve error handling
 -   Error handling run out of Twillio funds
+-  **Make API details into environment variables**
 - Limit IP address access of API
 - Sell function that acts based on the price of currencies held
 - Script to alert when one of the coins we hold are pumping
+
+Other Thoughts
 - Can we be more refined? i.e. During a bear market, buy approx weekly but wait for a large drop. Could also look at buying during a bull market when there are large dips
 - Intraday trading that capitalises on fluctuations.
