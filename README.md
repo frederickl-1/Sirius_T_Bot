@@ -16,7 +16,7 @@ In this version, the following:
 
 
 Current Bugs:
-- Need to update API variables in script
+-  **Make API details into environment variables** - currently only working for KC API keys
 - Code not letting me place multiple orders at the same time
 
 
@@ -26,7 +26,9 @@ To Do
 -   Creates text file if none exists
 - Improve error handling
 -   Error handling run out of Twillio funds
--  **Make API details into environment variables**
+- Sell Function
+-   A fixed % of holdings if holdings larger than 0
+-   If current price larger than ATH or Weightedbuy price, with linear sell funciton
 - Limit IP address access of API
 - Sell function that acts based on the price of currencies held
 - Script to alert when one of the coins we hold are pumping
