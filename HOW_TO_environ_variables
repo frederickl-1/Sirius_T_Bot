@@ -1,5 +1,8 @@
 #bash
 
+# Save environment varialbes permanently need to write to bashrc
+nano ~/.bashrc
+
 # Export to bashrc
 export KC_API_KEY=""
 export KC_API_SECRET=""
@@ -7,12 +10,9 @@ export KC_API_PASS=""
 export TWIL_ACCOUNT_SID='"
 export TWIL_AUTH_TOKEN='"
 
-
 # See environment variables
 printenv | grep KC_API_KEY
 
-# Save environment varialbes permanently need to write to bashrc
-nano ~/.bashrc
 
 # Need to adjust the crontab -e file as follows
 SHELL=/bin/bash
