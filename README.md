@@ -14,9 +14,18 @@ In this version, the following:
 - **Make API details into environment variables**
 - **Threshold set to 0.9**
 
-To Do:
+
+Current Bugs:
+- New Twillio account not sending messages
+- Need to update environment variables in profile (have tried bash) for the scrip
+
+
+To Do
 - Track ATH in real time
+-   Funtion to read and write from a text file
+-   Creates text file if none exists
 - Improve error handling
+-   Error handling run out of Twillio funds
 - Limit IP address access of API
 - Sell function that acts based on the price of currencies held
 - Script to alert when one of the coins we hold are pumping
