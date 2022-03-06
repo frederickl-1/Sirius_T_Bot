@@ -1,0 +1,40 @@
+
+
+###### Environment Variables ######
+
+#bash
+
+# Save environment varialbes permanently need to write to:
+#nano ~/.bashrc
+try profile or bashrc-profile
+
+# Export to bashrc
+export KC_API_KEY=""
+export KC_API_SECRET=""
+export KC_API_PASS=""
+export TWIL_ACCOUNT_SID='"
+export TWIL_AUTH_TOKEN='"
+
+# See environment variables
+printenv | grep KC_API_KEY
+
+
+####### Cron Jobs #####
+
+# Set cron editor to vim
+export EDIOTR=vim
+
+#Edit cron jobs
+crontab -e
+
+#chek all cronjobs
+crontab -l
+
+# Check logs of cron jobs. These will contain the print statements and errors from running the cron job
+cat cron.log
+
+
+# Need to adjust the crontab -e file as follows
+SHELL=/bin/bash
+*/1 * * * * source $HOME/.profile; /usr/bin/python3 /home/ubuntu/Sirius_T_Bo
+t/T_Bot.py >> ~/cron.log 2>&1
