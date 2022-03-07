@@ -7,16 +7,18 @@ from twilio.rest import Client
 
 # Sirius KuCoin Test Net
 
-'''
+
 api_key = "621a1b182b968a0001530eac"
 api_secret = "1c4aad2c-899c-4be7-b188-48901251b7cd"
 api_passphrase = "6215534b29c69200011e0027"
-'''
 
+
+
+'''
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
 api_passphrase = os.environ.get('KC_API_PASS')
-
+'''
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
@@ -29,11 +31,13 @@ theATH = float(file1.read())
 file1.close()
 
 
-# Load Current Price from Market
-
-from kucoin.client import Market
-client = Market()
-theCurrentPrice = float(client.get_ticker(symbol="BTC-USDT")['price'])
+def currentprice(tickr):
+    
+    from kucoin.client import Market
+    client = Market()
+    theCurrentPrice = float(client.get_ticker(symbol=tickr)['price'])
+    
+    return theCurrentPrice
 
 
 if theCurrentPrice > theATH:
@@ -52,8 +56,7 @@ myCapital = float(account[account['currency'] == 'USDT']['balance'].iloc[0])
 myHodlings = float(account[account['currency'] == 'BTC']['balance'].iloc[0])
 
 
-## Set other required variables
-myThreshold = 0.9
+
 
 
 
@@ -69,13 +72,13 @@ def sendtext(message):
   from twilio.rest import Client
 
   # Durka proton Mail account
-  '''
   account_sid = 'ACe4dae2d7377a52438c4d4b6d8d53ed60'
   auth_token = 'b9e08169dba1485c8121184fd89356ff'
 
   '''
   account_sid = os.environ.get('TWIL_ACCOUNT_SID')
   auth_token = os.environ.get('TWIL_AUTH_TOKEN')
+  '''
 
   client = Client(account_sid, auth_token)
 
@@ -119,13 +122,16 @@ These functions are called in f_placeOrder
 '''
 
 # Define functions that determine the buy and sell amount
-def f_buyAmount():
+def f_buyAmount(x):
   '''
   Currently fixed buy amount, independent of other variables
   '''
+  
+  # ETH:BTC:ADA
+  # 0.45:0.3:0.25
+  # amount = [0.45*x, 0.3*x, 0.25*x]
 
-  amount = 100
-
+  amount = 200
   return amount
 
 def f_sellAmount():
@@ -175,8 +181,8 @@ def f_placeBuyOrder(buyamount):
       
       print(message)
       
-
-      sendtext(message)
+      
+      #sendtext(message)
 
       
     except Exception as e:
@@ -190,10 +196,11 @@ def f_placeBuyOrder(buyamount):
 ######################################### Assess Opportunity Function #########################################
 
 def f_assessOpp(threshold, ath, currentprice):
+    
   
   if currentprice < ath*threshold: #Buy condition
 
-    buyamount = f_buyAmount()
+    buyamount = f_buyAmount(200)
     f_placeBuyOrder(buyamount)
 
 
@@ -213,14 +220,25 @@ def f_assessOpp(threshold, ath, currentprice):
 
 
 def run(myThreshold, theATH, theCurrentPrice):
+    
+
 
   f_assessOpp(myThreshold, theATH, theCurrentPrice)
 
   '''
   TextBalances()
   '''
+  
+  
  
+theCurrentPrice = currentprice("BTC-USDT")
+myThreshold = 0.65
+
 run(myThreshold, theATH, theCurrentPrice)
+
+
+
+
 
 
 
