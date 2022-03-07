@@ -3,33 +3,44 @@ import os
 import pandas as pd
 from twilio.rest import Client
 
-# Load environment variables
-source ~/.bashrc
-
-######################################### Set up with API detaoils #########################################
+######################################### Set up with API details #########################################
 
 # Sirius KuCoin Test Net
 
-'''
-api_key = os.environ.get('KC_API_KEY') #api_key = "6215534b29c69200011e0027"
-api_secret = "8b25ab7f-2a50-44de-8ffc-f0a430040aca"
-api_passphrase = "6NAcxQ#gob!$!FUAf4j6#JcooX%&f"
+
+api_key = "621a1b182b968a0001530eac"
+api_secret = "1c4aad2c-899c-4be7-b188-48901251b7cd"
+api_passphrase = "6215534b29c69200011e0027"
 
 '''
-api_key = os.environ.get('KC_API_KEY')
-api_secret = os.environ.get('KC_API_SECRET')
-api_passphrase = os.environ.get('KC_API_PASS')
-
+api_key = os.environ.get(KC_API_KEY)
+api_secret = os.environ.get(KC_API_SECRET)
+api_passphrase = os.environ.get(KC_API_PASS)
+'''
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
-These varriables are the input to the run function
+These varriables are the input to the 'run' function
 '''
 
-## Current Price
+# Load in ATH from text file
+file1 = open("ATH_tracker.txt", "r")
+theATH = float(file1.read())
+file1.close()
+
+
+# Load Current Price from Market
+
 from kucoin.client import Market
 client = Market()
 theCurrentPrice = float(client.get_ticker(symbol="BTC-USDT")['price'])
+
+
+if theCurrentPrice > theATH:
+    file2 = open("ATH_tracker.txt", "w")
+    file2.write(str(theCurrentPrice))
+    file2.close()
+    
 
 
 ## My Holdings
@@ -43,7 +54,7 @@ myHodlings = float(account[account['currency'] == 'BTC']['balance'].iloc[0])
 
 ## Set other required variables
 myThreshold = 0.9
-theATH = 69044.77
+
 
 
 print(f'PiggyBank contains ${myCapital} USDT')
@@ -57,23 +68,27 @@ def sendtext(message):
   import os
   from twilio.rest import Client
 
-  account_sid = 'ACfa019028d2069cd11fc93988692a8b0d'
-  auth_token = '498ee4715983e6cde24cc7ae9baa4a75'
+  # Durka proton Mail account
+  account_sid = 'ACe4dae2d7377a52438c4d4b6d8d53ed60'
+  auth_token = '64e2a4adb8ece62718cb326607521d1f'
 
   '''
-  account_sid = os.environ.get('TWIL_ACCOUNT_SID')
-  auth_token = os.environ.get('TWIL_AUTH_TOKEN')
+  account_sid = os.environ.get(TWIL_ACCOUNT_SID)
+  auth_token = os.environ.get(TWIL_AUTH_TOKEN)
   '''
 
   client = Client(account_sid, auth_token)
 
-  numbers_to_message = ['+447969808650']#, '+447947964223']
+  numbers_to_message = ['+447969808650']
   for number in numbers_to_message:
       client.messages.create(
           body = message,
-          from_ = '+19035225966',
+          from_ = '+16814994351',
           to = number
       )
+      
+      
+
 
 def TextBalances():
 
@@ -88,7 +103,7 @@ def TextBalances():
   Balances = a.iloc[:,1].to_list()
 
   message = (
-      f'Account Balances:'\
+      f'Account Balances:'
       f' {Balances[0]} {Holdings[0]}.'\
       f' {Balances[1]} {Holdings[1]}.'\
       f' {Balances[2]} {Holdings[2]}.'
@@ -96,6 +111,7 @@ def TextBalances():
 
   print(message)
   sendtext(message)
+  
 
 ######################################### Function to determine Buy / Sell amount #########################################
 '''
@@ -136,12 +152,12 @@ def f_placeBuyOrder(buyamount):
       from kucoin.client import Trade
       client = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
       print(str(round(buyamount/3, 3)))
-      order1 = client.create_market_order('ETH-USDT', 'buy', funds=str(round(buyamount/3, 3)))
-      print(order1)
-      order2 = client.create_market_order('ADA-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+      order2 = client.create_market_order('BTC-USDT', 'buy', funds=str(round(buyamount/3, 3)))
       print(order2)
       #order3 = client.create_market_order('MATIC-USDT', 'buy', funds=str(round(buyamount/3, 3)))
       #print(order3)
+      #      order1 = client.create_market_order('ETH-USDT', 'buy', funds=str(round(buyamount/3, 3)))
+            #print(order1)
 
       from kucoin.client import Market
       client = Market()
@@ -158,8 +174,11 @@ def f_placeBuyOrder(buyamount):
       )
       
       print(message)
+      
+
       sendtext(message)
 
+      
     except Exception as e:
       print(f'Error placing order: {e}')
 
@@ -179,6 +198,11 @@ def f_assessOpp(threshold, ath, currentprice):
 
 
   if currentprice > ath: #Sell condition
+  
+  #Sell a fixed 5% of the holdings
+  #If holdings larger than 0
+  #If current price larger than ATH or weighted buy price (sum Fiat spent / sum BTC bought)
+  #Linear sell function
 
     sellamount = f_sellAmount()
     f_placeSellOrder(sellamount)
@@ -192,8 +216,12 @@ def run(myThreshold, theATH, theCurrentPrice):
 
   f_assessOpp(myThreshold, theATH, theCurrentPrice)
 
+  '''
   TextBalances()
-    
+  '''
  
 run(myThreshold, theATH, theCurrentPrice)
+
+
+
 
