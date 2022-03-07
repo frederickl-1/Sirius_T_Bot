@@ -38,3 +38,11 @@ cat cron.log
 SHELL=/bin/bash
 */1 * * * * source $HOME/.profile; /usr/bin/python3 /home/ubuntu/Sirius_T_Bo
 t/T_Bot.py >> ~/cron.log 2>&1
+
+
+
+####### Read and Write to text files ######
+
+Need to insert full path of text file
+
+
