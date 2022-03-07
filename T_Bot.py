@@ -13,9 +13,9 @@ api_secret = "1c4aad2c-899c-4be7-b188-48901251b7cd"
 api_passphrase = "6215534b29c69200011e0027"
 '''
 
-api_key = os.environ.get(KC_API_KEY)
-api_secret = os.environ.get(KC_API_SECRET)
-api_passphrase = os.environ.get(KC_API_PASS)
+api_key = os.environ.get('KC_API_KEY')
+api_secret = os.environ.get('KC_API_SECRET')
+api_passphrase = os.environ.get('KC_API_PASS')
 
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
@@ -73,8 +73,8 @@ def sendtext(message):
   auth_token = '64e2a4adb8ece62718cb326607521d1f'
 
   '''
-  account_sid = os.environ.get(TWIL_ACCOUNT_SID)
-  auth_token = os.environ.get(TWIL_AUTH_TOKEN)
+  account_sid = os.environ.get('TWIL_ACCOUNT_SID')
+  auth_token = os.environ.get('TWIL_AUTH_TOKEN')
   '''
 
   client = Client(account_sid, auth_token)
