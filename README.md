@@ -30,6 +30,7 @@ To Do
 - Limit IP address access of API
 - Sell function that acts based on the price of currencies held
 - Script to alert when one of the coins we hold are pumping
+- Track USDT to GBP exchange for our GBP input
 
 Other Thoughts
 - Can we be more refined? i.e. During a bear market, buy approx weekly but wait for a large drop. Could also look at buying during a bull market when there are large dips
