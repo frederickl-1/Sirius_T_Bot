@@ -7,16 +7,16 @@ from twilio.rest import Client
 
 # Sirius KuCoin Test Net
 
-
+'''
 api_key = "621a1b182b968a0001530eac"
 api_secret = "1c4aad2c-899c-4be7-b188-48901251b7cd"
 api_passphrase = "6215534b29c69200011e0027"
-
 '''
+
 api_key = os.environ.get(KC_API_KEY)
 api_secret = os.environ.get(KC_API_SECRET)
 api_passphrase = os.environ.get(KC_API_PASS)
-'''
+
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
