@@ -11,19 +11,17 @@ In this version, the following:
 - Text message sent when purchase is made
 - **Text message to give account balances (requires further dev)**
 - **Updated the install python libraries script**
+- **Make API details into environment variables**
+- **Track ATH in real time**
 
 - **Threshold set to 0.9**
 
 
 Current Bugs:
--  **Make API details into environment variables** - currently only working for KC API keys
 - Code not letting me place multiple orders at the same time
 
 
 To Do
-- Track ATH in real time
--   Funtion to read and write from a text file
--   Creates text file if none exists
 - Improve error handling
 -   Error handling run out of Twillio funds
 - Sell Function
