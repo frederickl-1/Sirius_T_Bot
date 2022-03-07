@@ -69,13 +69,13 @@ def sendtext(message):
   from twilio.rest import Client
 
   # Durka proton Mail account
+  '''
   account_sid = 'ACe4dae2d7377a52438c4d4b6d8d53ed60'
   auth_token = 'b9e08169dba1485c8121184fd89356ff'
 
   '''
   account_sid = os.environ.get('TWIL_ACCOUNT_SID')
   auth_token = os.environ.get('TWIL_AUTH_TOKEN')
-  '''
 
   client = Client(account_sid, auth_token)
 
