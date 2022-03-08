@@ -13,7 +13,9 @@ In this version, the following:
 - Track ATH in real time
 - Threshold set to 0.65
 
-
+Developments
+- Create more if statements in assessment function w. text message
+- starting to develop weighted price code
 
 To Do
 - Make tickr input
