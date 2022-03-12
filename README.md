@@ -24,6 +24,7 @@ To Do
 -   If current price larger than ATH or Weightedbuy price, with linear sell funciton
 - Improve error handling
 -   Error handling run out of Twillio funds
+- Warning when nearly out of funds
 - Limit IP address access of API
 - Sell function that acts based on the price of currencies held
 - Script to alert when one of the coins we hold are pumping
