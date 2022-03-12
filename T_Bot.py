@@ -42,13 +42,13 @@ theCurrentPrice = float(marketclient.get_ticker(symbol="BTC-USDT")['price'])
 
 
 # Load and update ATH
-file1 = open("home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "r")
+file1 = open("/home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "r")
 #file1 = open("ATH_tracker.txt", "r")
 theATH = float(file1.read())
 file1.close()
 
 if theCurrentPrice > theATH:
-    file2 = open("home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "w")
+    file2 = open("/home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "w")
     #file2 = open("ATH_tracker.txt", "w")
     file2.write(str(theCurrentPrice))
     file2.close()
