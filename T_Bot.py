@@ -64,7 +64,6 @@ if theCurrentPrice > theATH:
     
 
 
-
 ## Set other required variables
 myThreshold = 0.65
 
@@ -89,19 +88,6 @@ def sendtext(message):
       
 def TextBalances(capital, hodling):
 
-
-    '''
-    from kucoin.client import User
-    client = User(api_key, api_secret, api_passphrase, is_sandbox=True)
-    account = client.get_account_list()
-    account = pd.DataFrame(account)
-      
-    a = account[['currency', 'balance']]
-      
-    Holdings = a.iloc[:,0].to_list()
-    Balances = a.iloc[:,1].to_list()
-          
-    '''
     capital = round(capital, 2)
     hodling = round(hodling, 2)
     
@@ -130,16 +116,6 @@ def f_buyAmount():
   return amount
 
 
-def f_sellAmount(dollar_value_hodling):
-  '''
-  Sell 5% of hodlings
-  '''
-  
-  amount = dollar_value_hodling
-  amount = 0.05*amount
-  return amount
-
-
 ######################################### Function to place order #########################################
 '''
 This function is called in the assess conditions function
@@ -157,21 +133,6 @@ def f_placeBuyOrder(buyamount):
       #sendtext(message)
     except Exception as e:
       print(f'Error placing order: {e}')
-
-
-def f_placeSellOrder(sellamount):
-    try:
-      order = tradeclient.create_market_order('BTC-USDT', 'sell', funds=str(round(sellamount, 3)))
-      print(order)
-      message = (
-          f'Sell function successfully executed.'\
-          f' ${round(sellamount, 2)} of BTC sold.'
-      )
-      print(message)
-      #sendtext(message)
-    except Exception as e:
-      print(f'Error placing order: {e}')
-
 
 ######################################### Assess Opportunity Function #########################################
 
@@ -210,7 +171,7 @@ def f_assessOpp():
       
 
   elif (currentprice > ath) & (myHodlings*currentprice > 100):
-      message = f'Sell opportunity identified'
+      message = f"No sell function defined. Cannot act on opportunity"
       print(message)
       #sendtext(message)
       
@@ -222,7 +183,7 @@ def f_assessOpp():
 
   elif (currentprice > ath) & (myHodlings*currentprice < 100):
         
-     message = f'Run out of BTC. Cant action sell opportunity'
+     message = f"No sell function defined. Cannot act on opportunity"
      print(message)
      #sendtext(message)
       
@@ -244,13 +205,3 @@ def f_assessOpp():
 
 f_assessOpp()
 
-
-
-
-## Weighted price  
-orders = tradeclient.get_order_list(symbol="BTC-USDT", status='done', side='buy')
-
-orders = orders['items']
-orders = pd.DataFrame(orders)
-orders[['size', 'funds']] = orders[['size','funds']].astype(float)
-boughtamount = orders[orders['side']=='buy']['size'].sum(0)
