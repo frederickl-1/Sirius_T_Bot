@@ -7,7 +7,6 @@ import pandas as pd
 
 # Sirius KuCoin Test Net
 
-
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
 api_passphrase = os.environ.get('KC_API_PASS')
@@ -23,13 +22,13 @@ These varriables are the input to the 'run' function
 
 
 from kucoin.client import User
-userclient = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+userclient = User(api_key, api_secret, api_passphrase)
 
 from kucoin.client import Market
 marketclient = Market()
 
 from kucoin.client import Trade
-tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+tradeclient = Trade(api_key, api_secret, api_passphrase)
 
 
 # Load Current Price from Market
@@ -95,7 +94,7 @@ def f_buyAmount():
   Currently fixed buy amount, independent of other variables
   '''
 
-  amount = 100
+  amount = 5
   return amount
 
 
@@ -186,3 +185,6 @@ def f_assessOpp():
 
 
 f_assessOpp()
+
+
+
