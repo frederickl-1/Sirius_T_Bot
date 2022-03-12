@@ -8,24 +8,13 @@ import pandas as pd
 # Sirius KuCoin Test Net
 
 
-api_key = "621a1b182b968a0001530eac"
-api_secret = "1c4aad2c-899c-4be7-b188-48901251b7cd"
-api_passphrase = "6215534b29c69200011e0027"
-
-account_sid = 'ACe4dae2d7377a52438c4d4b6d8d53ed60'
-auth_token = 'b9e08169dba1485c8121184fd89356ff'
-
-
-
-'''
-
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
 api_passphrase = os.environ.get('KC_API_PASS')
 
 account_sid = os.environ.get('TWIL_ACCOUNT_SID')
 auth_token = os.environ.get('TWIL_AUTH_TOKEN')
-'''
+
 
 ######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
 '''
@@ -42,20 +31,15 @@ marketclient = Market()
 from kucoin.client import Trade
 tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
 
-from twilio.rest import Client
-twilclient = Client(account_sid, auth_token)
-      
-# Load in ATH from text file
+
+# Load Current Price from Market
+theCurrentPrice = float(marketclient.get_ticker(symbol="BTC-USDT")['price'])
+
+
+# Load and update ATH
 file1 = open("ATH_tracker.txt", "r")
 theATH = float(file1.read())
 file1.close()
-
-
-# Load Current Price from Market
-
-
-theCurrentPrice = float(marketclient.get_ticker(symbol="BTC-USDT")['price'])
-
 
 if theCurrentPrice > theATH:
     file2 = open("ATH_tracker.txt", "w")
@@ -69,14 +53,15 @@ myThreshold = 0.65
 
 
 
-print(f'PiggyBank contains ${myCapital} USDT')
-print(f'PiggyBank contains {myHodlings} BTC')
-print(f'Current price of BTC is ${theCurrentPrice}')
 
 ######################################### Function to send text message #########################################
 
 def sendtext(message):
 
+
+  from twilio.rest import Client
+  twilclient = Client(account_sid, auth_token)
+  
   numbers_to_message = ['+447969808650']
   for number in numbers_to_message:
       twilclient.messages.create(
@@ -92,9 +77,7 @@ def TextBalances(capital, hodling):
     hodling = round(hodling, 2)
     
     message = (
-        f'Account Balances:'
-        f' USDT: ${capital} /'
-        f' BTC: {hodling}'
+        f'. \nAccount Balances: \nUSDT: ${capital} \nBTC: {hodling}'
         )
         
     print(message)
@@ -126,11 +109,10 @@ def f_placeBuyOrder(buyamount):
       order = tradeclient.create_market_order('BTC-USDT', 'buy', funds=str(round(buyamount, 3)))
       print(order)
       message = (
-          f'Buy function successfully executed.'\
-          f' ${round(buyamount, 2)} of BTC purchased.'
+          f'. \nBuy function successfully executed: \n${round(buyamount, 2)} of BTC purchased.'
       )
       print(message)
-      #sendtext(message)
+      sendtext(message)
     except Exception as e:
       print(f'Error placing order: {e}')
 
@@ -145,8 +127,8 @@ def f_assessOpp():
   ## My Holdings
   account = userclient.get_account_list()
   account = pd.DataFrame(account)
-  myCapital = float(account[account['currency'] == 'USDT']['balance'].iloc[0])
-  myHodlings = float(account[account['currency'] == 'BTC']['balance'].iloc[0])
+  myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
+  myHodlings = float(account[(account['currency'] == 'BTC') & (account['type'] == 'trade')]['balance'].iloc[0])
   
   ## Weighted price  
   orders = tradeclient.get_order_list(symbol="BTC-USDT", status='done', side='buy')
@@ -204,4 +186,3 @@ def f_assessOpp():
 
 
 f_assessOpp()
-
