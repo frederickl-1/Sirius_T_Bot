@@ -44,5 +44,5 @@ t/T_Bot.py >> ~/cron.log 2>&1
 ####### Read and Write to text files ######
 
 Need to insert full path of text file
-
+/home/ubuntu/Sirius_T_Bot/
 
