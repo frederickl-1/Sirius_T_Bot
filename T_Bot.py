@@ -3,9 +3,8 @@ import os
 import pandas as pd
 
 
-######################################### Set up with API details #########################################
 
-# Sirius KuCoin Test Net
+######################################### Set up with API details #########################################
 
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
@@ -14,82 +13,68 @@ api_passphrase = os.environ.get('KC_API_PASS')
 account_sid = os.environ.get('TWIL_ACCOUNT_SID')
 auth_token = os.environ.get('TWIL_AUTH_TOKEN')
 
+path = '/home/ubuntu/ATH/'
 
-######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
-'''
-These varriables are the input to the 'run' function
-'''
+
+#################################### Input Parameters #################################### 
+
+
+myThreshold = 0.65
+
+tickr = ['BTC-USDT', 'ETH-USDT']
+
+proportion = {
+    'BTC-USDT':0.5,
+    'ETH-USDT':0.25}
+
+mssgs =[]
 
 
 from kucoin.client import User
-userclient = User(api_key, api_secret, api_passphrase)#, is_sandbox=True)
+userclient = User(api_key, api_secret, api_passphrase, is_sandbox=True)
 
 from kucoin.client import Market
 marketclient = Market()
 
 from kucoin.client import Trade
-tradeclient = Trade(api_key, api_secret, api_passphrase)#, is_sandbox=True)
-
-## Load Account info
-account = userclient.get_account_list()
-account = pd.DataFrame(account)
-myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
-myHodlings = float(account[(account['currency'] == 'BTC') & (account['type'] == 'trade')]['balance'].iloc[0])
-
-
-# Load Current Price from Market
-theCurrentPrice = float(marketclient.get_ticker(symbol="BTC-USDT")['price'])
-
-
-# Load and update ATH
-file1 = open("/home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "r")
-#file1 = open("ATH_tracker.txt", "r")
-theATH = float(file1.read())
-file1.close()
-
-if theCurrentPrice > theATH:
-    file2 = open("/home/ubuntu/Sirius_T_Bot/ATH_tracker.txt", "w")
-    #file2 = open("ATH_tracker.txt", "w")
-    file2.write(str(theCurrentPrice))
-    file2.close()
-    
-
-
-## Set other required variables
-myThreshold = 0.65
-
+tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
 
 
 
 ######################################### Function to send text message #########################################
 
-def sendtext(message):
+def sendtext(txt = mssgs):
 
 
   from twilio.rest import Client
   twilclient = Client(account_sid, auth_token)
+  txt = ''.join(txt)
+  print(txt)
   
+  '''
   numbers_to_message = ['+447969808650']
   for number in numbers_to_message:
       twilclient.messages.create(
-          body = message,
+          body = mssgs,
           from_ = '+16814994351',
           to = number
       )
-      
-      
+  '''
+
+'''
 def TextBalances(capital, hodling):
 
     capital = round(capital, 2)
     hodling = round(hodling, 5)
     
     message = (
-        f'. \nAccount Balances: \nUSDT: ${capital} \nBTC: {hodling}'
+        
         )
         
     print(message)
     sendtext(message)
-
+    
+'''
 
 ######################################### Function to determine Buy / Sell amount #########################################
 '''
@@ -97,13 +82,19 @@ These functions are called in f_placeOrder
 '''
 
 # Define functions that determine the buy and sell amount
-def f_buyAmount():
-  '''
-  Currently fixed buy amount, independent of other variables
-  '''
+def f_buyAmount(t):
 
-  amount = 5
+  #Buy amount in proportions as defined initially
+  
+
+  amount = 200*proportion[t]
+  
+  
   return amount
+
+
+
+
 
 
 ######################################### Function to place order #########################################
@@ -111,88 +102,99 @@ def f_buyAmount():
 This function is called in the assess conditions function
 '''
 
-def f_placeBuyOrder(buyamount):
+def f_placeBuyOrder(buyamount, t):
     try:
-      order = tradeclient.create_market_order('BTC-USDT', 'buy', funds=str(round(buyamount, 3)))
+      order = tradeclient.create_market_order(t, 'buy', funds=str(round(buyamount, 3)))
       print(order)
-      message = (
-          f'. \nBuy function successfully executed: \n${round(buyamount, 2)} of BTC purchased.'
-      )
-      print(message)
-      sendtext(message)
+      global mssgs
+      mssgs.append(f'. \nBuy function successfully executed: ${round(buyamount, 2)} of ' + t + ' purchased.')
     except Exception as e:
       print(f'Error placing order: {e}')
 
 ######################################### Assess Opportunity Function #########################################
 
-def f_assessOpp():
+def f_assessOpp(t, currentprice, ath, threshold):
 
-  currentprice = theCurrentPrice
-  ath = theATH
-  threshold = myThreshold
+  buy_amount = f_buyAmount(t)
+  sell_amount = 10
   
-  
-  ## Weighted price  
-  orders = tradeclient.get_order_list(symbol="BTC-USDT", status='done', side='buy')
-
-  
+  global mssgs
   ## If statements to determine action
-  if (currentprice < ath*threshold) & (myCapital > 10):
+  if (currentprice < ath*threshold) & (myCapital > buy_amount):
+      mssgs.append(f'. \nBuy opportunity identified for ' + t)
       
-      message = f'. \nBuy opportunity identified'
-      print(message)
-      sendtext(message)
+      f_placeBuyOrder(buy_amount, t)
       
-      buyamount = f_buyAmount()
-      f_placeBuyOrder(buyamount)
-      
-  elif (currentprice < ath*threshold) & (myCapital < 10):
-      
-      message = f'. \nNot enough funds to action on buy opportunity'
-      print(message)
-      sendtext(message)
-      
-      
+  elif (currentprice < ath*threshold) & (myCapital < buy_amount):
+      mssgs.append(f'. \nNot enough funds to action on buy opportunity on ' + t)
 
-  elif (currentprice > ath) & (myHodlings*currentprice > 10):
-      message = f". \nNo sell function defined. Cannot act on opportunity"
-      print(message)
-      sendtext(message)
       
-      sellamount = f_sellAmount(myHodlings*currentprice)
-      f_placeSellOrder(sellamount)
+  elif (currentprice > ath) & (myHodlings*currentprice > sell_amount):
+      mssgs.append(f". \nNo sell function defined. Cannot act on opportunity to sell " +t)
+      
       #If holdings larger than 0
       #If current price larger than ATH or weighted buy price (sum Fiat spent / sum BTC bought)
       #Linear sell function
 
-  elif (currentprice > ath) & (myHodlings*currentprice < 10):
-        
-     message = f". \nNo sell function defined. Cannot act on opportunity"
-     print(message)
-     sendtext(message)
+  elif (currentprice > ath) & (myHodlings*currentprice < sell_amount): 
+      mssgs.append(f". \nNo sell function defined. Cannot act on opportunity to sell " + t)
       
      
-     
   elif (currentprice > ath*threshold) & (currentprice < ath):
-     message = f'. \nPrice in mid-range. No action to be taken'
-     print(message)
-     sendtext(message)      
+      mssgs.append(f'. \nPrice in mid-range. No action to be taken on ' + t)
+     
+
+######################################### Pull necessary inputs to functions (e.g. price, holdings, etc) #########################################
+'''
+These varriables are the input to the 'run' function
+'''
 
 
+for t in tickr:
 
-######################################### Call Function #########################################
+    # Load account and price info
+    account = userclient.get_account_list()
+    account = pd.DataFrame(account)
+    myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
+    myHodlings = float(account[(account['currency'] == t[0:-5]) & (account['type'] == 'trade')]['balance'].iloc[0])
+    theCurrentPrice = float(marketclient.get_ticker(symbol=t)['price'])
+    
+    
+    # Read and update API
+    file1 = open(path+t[0:-5]+"_ATH.txt", "r")
+    theATH = float(file1.read())
+    file1.close()
+    
+    if theCurrentPrice > theATH:
+        theATH = theCurrentPrice
+        file2 = open(path+t[0:-5]+"_ATH.txt", "w")
+        file2.write(str(theCurrentPrice))
+        file2.close()
+    
+     
+    f_assessOpp(t, theCurrentPrice, 200000, myThreshold)
 
-f_assessOpp()
+
+sendtext(mssgs)
 
 ######################################### Load Account info after execution #########################################
+
 
 ## Load Account info
 account = userclient.get_account_list()
 account = pd.DataFrame(account)
 myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
-myHodlings = float(account[(account['currency'] == 'BTC') & (account['type'] == 'trade')]['balance'].iloc[0])
 
-TextBalances(myCapital, myHodlings)
+mssg = f'. \nRemaining Balance: \nUSDT: ${myCapital}'
+
+if myCapital < 200:
+    mssg = mssg + f'\nTop Up!'
+
+sendtext(mssg)
 
 
-  
+
+
+
+
+
