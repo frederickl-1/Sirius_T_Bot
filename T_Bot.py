@@ -6,18 +6,6 @@ import pandas as pd
 
 ######################################### Set up with API details #########################################
 
-myThreshold = 0.65
-
-tickr = ['BTC-USDT', 'ETH-USDT']
-
-proportion = {
-    'BTC-USDT':0.5,
-    'ETH-USDT':0.25}
-
-mssgs =[]
-
-
-
 api_key = os.environ.get('KC_API_KEY')
 api_secret = os.environ.get('KC_API_SECRET')
 api_passphrase = os.environ.get('KC_API_PASS')
@@ -27,6 +15,19 @@ auth_token = os.environ.get('TWIL_AUTH_TOKEN')
 
 path = '/home/ubuntu/ATH/'
 
+
+#################################### Input Parameters #################################### 
+
+
+myThreshold = 0.65
+
+tickr = ['BTC-USDT', 'ETH-USDT']
+
+proportion = {
+    'BTC-USDT':0.5,
+    'ETH-USDT':0.25}
+
+mssgs =[]
 
 
 from kucoin.client import User
@@ -42,14 +43,13 @@ tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
 
 ######################################### Function to send text message #########################################
 
-def sendtext():
+def sendtext(txt = mssgs):
 
 
   from twilio.rest import Client
   twilclient = Client(account_sid, auth_token)
-  global mssgs
-  mssgs = ''.join(mssgs)
-  print(mssgs)
+  txt = ''.join(txt)
+  print(txt)
   
   '''
   numbers_to_message = ['+447969808650']
@@ -68,7 +68,7 @@ def TextBalances(capital, hodling):
     hodling = round(hodling, 5)
     
     message = (
-        f'. \nAccount Balances: \nUSDT: ${capital} \nBTC: {hodling}'
+        
         )
         
     print(message)
@@ -175,7 +175,7 @@ for t in tickr:
     f_assessOpp(t, theCurrentPrice, 200000, myThreshold)
 
 
-sendtext()
+sendtext(mssgs)
 
 ######################################### Load Account info after execution #########################################
 
@@ -184,10 +184,17 @@ sendtext()
 account = userclient.get_account_list()
 account = pd.DataFrame(account)
 myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
-myHodlings = float(account[(account['currency'] == 'BTC') & (account['type'] == 'trade')]['balance'].iloc[0])
+
+mssg = f'. \nRemaining Balance: \nUSDT: ${myCapital}'
+
+if myCapital < 200:
+    mssg = mssg + f'\nTop Up!'
+
+sendtext(mssg)
 
 
-#TextBalances(myCapital, myHodlings)
 
 
- 
+
+
+
