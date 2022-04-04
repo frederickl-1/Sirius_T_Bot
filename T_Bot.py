@@ -1,25 +1,13 @@
 import string
 import os
 import pandas as pd
-
-
-
-######################################### Set up with API details #########################################
-
-api_key = os.environ.get('KC_API_KEY')
-api_secret = os.environ.get('KC_API_SECRET')
-api_passphrase = os.environ.get('KC_API_PASS')
-
-account_sid = os.environ.get('TWIL_ACCOUNT_SID')
-auth_token = os.environ.get('TWIL_AUTH_TOKEN')
-
-path = '/home/ubuntu/ATH/'
+from kucoin.client import Market, User, Trade
 
 
 #################################### Input Parameters #################################### 
 
-
-myThreshold = 0.65
+TestNet = True
+weeklyAmount = 200
 
 tickr = ['BTC-USDT', 'ETH-USDT']
 
@@ -27,23 +15,48 @@ proportion = {
     'BTC-USDT':0.5,
     'ETH-USDT':0.25}
 
-mssgs =[]
+myThreshold = 0.65
 
 
-from kucoin.client import User
-userclient = User(api_key, api_secret, api_passphrase, is_sandbox=True)
 
-from kucoin.client import Market
-marketclient = Market()
+######################################### Set up with API details #########################################
 
-from kucoin.client import Trade
-tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+# Laptop
+
+
+# AWS
+
+
+
+if TestNet:
+    Net = 'Test Net'
+    api_key = os.environ.get('TEST_KC_API_KEY')
+    api_secret = os.environ.get('TEST_KC_API_SECRET')
+    api_passphrase = os.environ.get('TEST_KC_API_PASS')
+    marketclient = Market()
+    userclient = User(api_key, api_secret, api_passphrase, is_sandbox=True)
+    tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
+else:
+    Net = 'Main Net'
+    api_key = os.environ.get('KC_API_KEY')
+    api_secret = os.environ.get('KC_API_SECRET')
+    api_passphrase = os.environ.get('KC_API_PASS')
+    marketclient = Market()
+    userclient = User(api_key, api_secret, api_passphrase)
+    tradeclient = Trade(api_key, api_secret, api_passphrase)
+
+
+account_sid = os.environ.get('TWIL_ACCOUNT_SID')
+auth_token = os.environ.get('TWIL_AUTH_TOKEN')
+
+path = '/home/ubuntu/ATH/'
+
 
 
 
 ######################################### Function to send text message #########################################
 
-def sendtext(txt = mssgs):
+def sendtext(txt):
 
 
   from twilio.rest import Client
@@ -83,19 +96,9 @@ These functions are called in f_placeOrder
 
 # Define functions that determine the buy and sell amount
 def f_buyAmount(t):
-
   #Buy amount in proportions as defined initially
-  
-
-  amount = 200*proportion[t]
-  
-  
+  amount = weeklyAmount*proportion[t]
   return amount
-
-
-
-
-
 
 ######################################### Function to place order #########################################
 '''
@@ -149,6 +152,7 @@ def f_assessOpp(t, currentprice, ath, threshold):
 These varriables are the input to the 'run' function
 '''
 
+mssgs =[]
 
 for t in tickr:
 
@@ -172,7 +176,7 @@ for t in tickr:
         file2.close()
     
      
-    f_assessOpp(t, theCurrentPrice, 200000, myThreshold)
+    f_assessOpp(t, theCurrentPrice, theATH, myThreshold)
 
 
 sendtext(mssgs)
@@ -187,7 +191,7 @@ myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 
 
 mssg = f'. \nRemaining Balance: \nUSDT: ${myCapital}'
 
-if myCapital < 200:
+if myCapital < weeklyAmount:
     mssg = mssg + f'\nTop Up!'
 
 sendtext(mssg)
