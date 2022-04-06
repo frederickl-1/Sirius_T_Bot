@@ -13,7 +13,7 @@ tickr = ['BTC-USDT', 'ETH-USDT']
 
 proportion = {
     'BTC-USDT':0.5,
-    'ETH-USDT':0.25}
+    'ETH-USDT':0.5}
 
 myThreshold = 0.65
 
@@ -21,15 +21,10 @@ myThreshold = 0.65
 
 ######################################### Set up with API details #########################################
 
-# Laptop
-
 
 # AWS
 
-
-
 if TestNet:
-    Net = 'Test Net'
     api_key = os.environ.get('TEST_KC_API_KEY')
     api_secret = os.environ.get('TEST_KC_API_SECRET')
     api_passphrase = os.environ.get('TEST_KC_API_PASS')
@@ -37,21 +32,19 @@ if TestNet:
     userclient = User(api_key, api_secret, api_passphrase, is_sandbox=True)
     tradeclient = Trade(api_key, api_secret, api_passphrase, is_sandbox=True)
 else:
-    Net = 'Main Net'
     api_key = os.environ.get('KC_API_KEY')
     api_secret = os.environ.get('KC_API_SECRET')
     api_passphrase = os.environ.get('KC_API_PASS')
     marketclient = Market()
     userclient = User(api_key, api_secret, api_passphrase)
     tradeclient = Trade(api_key, api_secret, api_passphrase)
-
+    fred = os.environ.get('FRED')
+    mert = os.environ.get('MERT')
 
 account_sid = os.environ.get('TWIL_ACCOUNT_SID')
 auth_token = os.environ.get('TWIL_AUTH_TOKEN')
 
 path = '/home/ubuntu/ATH/'
-
-
 
 
 ######################################### Function to send text message #########################################
@@ -64,15 +57,13 @@ def sendtext(txt):
   txt = ''.join(txt)
   print(txt)
   
-  '''
-  numbers_to_message = ['+447969808650']
+  numbers_to_message = [fred]
   for number in numbers_to_message:
       twilclient.messages.create(
           body = mssgs,
           from_ = '+16814994351',
           to = number
       )
-  '''
 
 '''
 def TextBalances(capital, hodling):
