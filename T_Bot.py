@@ -15,14 +15,11 @@ proportion = {
     'BTC-USDT':0.5,
     'ETH-USDT':0.5}
 
-myThreshold = 0.70
+myThreshold = 0.7
 
 
 
 ######################################### Set up with API details #########################################
-
-
-# AWS
 
 if TestNet:
     api_key = os.environ.get('TEST_KC_API_KEY')
@@ -41,10 +38,14 @@ else:
 
 fred = os.environ.get('FRED')
 mert = os.environ.get('MERT')
+
+
 account_sid = os.environ.get('TWIL_ACCOUNT_SID')
 auth_token = os.environ.get('TWIL_AUTH_TOKEN')
 
 path = '/home/ubuntu/ATH/'
+
+
 
 
 ######################################### Function to send text message #########################################
@@ -57,13 +58,15 @@ def sendtext(txt):
   txt = ''.join(txt)
   print(txt)
   
+
   numbers_to_message = [fred]
   for number in numbers_to_message:
       twilclient.messages.create(
-          body = mssgs,
+          body = txt,
           from_ = '+16814994351',
           to = number
       )
+
 
 '''
 def TextBalances(capital, hodling):
@@ -186,10 +189,4 @@ if myCapital < weeklyAmount:
     mssg = mssg + f'\nTop Up!'
 
 sendtext(mssg)
-
-
-
-
-
-
 
