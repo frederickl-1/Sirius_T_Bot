@@ -15,7 +15,7 @@ proportion = {
     'BTC-USDT':0.5,
     'ETH-USDT':0.5}
 
-myThreshold = 0.65
+myThreshold = 0.70
 
 
 
