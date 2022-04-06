@@ -38,9 +38,9 @@ else:
     marketclient = Market()
     userclient = User(api_key, api_secret, api_passphrase)
     tradeclient = Trade(api_key, api_secret, api_passphrase)
-    fred = os.environ.get('FRED')
-    mert = os.environ.get('MERT')
 
+fred = os.environ.get('FRED')
+mert = os.environ.get('MERT')
 account_sid = os.environ.get('TWIL_ACCOUNT_SID')
 auth_token = os.environ.get('TWIL_AUTH_TOKEN')
 
