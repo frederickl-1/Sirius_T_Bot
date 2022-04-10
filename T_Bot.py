@@ -15,7 +15,7 @@ proportion = {
     'BTC-USDT':0.5,
     'ETH-USDT':0.5}
 
-myThreshold = 0.7
+myThreshold = 0.65
 
 
 
@@ -59,7 +59,7 @@ def sendtext(txt):
   print(txt)
   
 
-  numbers_to_message = [fred]
+  numbers_to_message = [fred, mert]
   for number in numbers_to_message:
       twilclient.messages.create(
           body = txt,
@@ -181,7 +181,7 @@ sendtext(mssgs)
 ## Load Account info
 account = userclient.get_account_list()
 account = pd.DataFrame(account)
-myCapital = float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0])
+myCapital = round(float(account[(account['currency'] == 'USDT') & (account['type'] == 'trade')]['balance'].iloc[0]), 2)
 
 mssg = f'. \nRemaining Balance: \nUSDT: ${myCapital}'
 
